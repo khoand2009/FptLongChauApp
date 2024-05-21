@@ -3,21 +3,25 @@
     ViewData["Title"] = "Drugs";
 }
 
-<div class="card-columns">
+
+<div class="row"> 
     @foreach (var drug in Model)
     {
-        <div class=card>
-            <h3 class="card-header">@drug.Name</h3>
-            <div class="card-body" style="height: 150px;">
-                @drug.Description
-            </div>
-            <div class="card-footer">
-                <span class="text-muted">@(drug.Price.ToString("n0")) VND</span>    
-                <a asp-route="addcart" 
-                   asp-route-drugid="@drug.DrugId"
-                   class="btn btn-secondary btn-sm float-right">Order</a>
+        <div class="col-md-4 mb-4"> 
+            <div class="card">
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(drug.ImagePath))
+                    {
+                        <img src="~/img/@drug.ImagePath" class="card-img-top img-fluid" alt="@drug.Name Image">
+                    }
+                    <h5 class="card-title">@drug.Name</h5>
+                    <p class="card-text">@drug.Description</p>
+                    <p class="card-text">
+                        <span class="text-muted">@(drug.Price.ToString("n0")) VND</span>
+                    </p>
+                    <a asp-route="addcart" asp-route-drugid="@drug.DrugId" class="btn btn-secondary btn-sm float-right">Order</a>
+                </div>
             </div>
         </div>
     }
-
 </div>

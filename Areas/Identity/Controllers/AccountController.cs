@@ -90,7 +90,7 @@ namespace FptLongChauApp.Areas.Identity.Controllers
         }
         //
         // GET: /Account/Register
-        [HttpGet]
+        [HttpGet("/register/")]
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {

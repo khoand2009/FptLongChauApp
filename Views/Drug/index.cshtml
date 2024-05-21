@@ -12,7 +12,7 @@
                 <div class="card-body">
                     @if (!string.IsNullOrEmpty(drug.ImagePath))
                     {
-                        <img src="~/img/@drug.ImagePath" class="card-img-top img-fluid" alt="@drug.Name Image">
+                        <img src="~/img/@drug.ImagePath" class="card-img-top" alt="@drug.Name Image" style="width: 100%; height: 200px; object-fit: cover;">
                     }
                     <h5 class="card-title">@drug.Name</h5>
                     <p class="card-text">@drug.Description</p>

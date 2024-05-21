@@ -31,7 +31,6 @@ namespace FptLongChauApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -50,7 +49,6 @@ namespace FptLongChauApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -98,6 +96,60 @@ namespace FptLongChauApp.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("FptLongChauApp.Models.Drug", b =>
+                {
+                    b.Property<int>("DrugId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrugId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("DECIMAL");
+
+                    b.HasKey("DrugId");
+
+                    b.ToTable("Drug");
+
+                    b.HasData(
+                        new
+                        {
+                            DrugId = 1,
+                            Description = "Số 1 cao 40cm rộng 20cm dày 20cm màu xanh lá cây đậm",
+                            Name = "Đá phong thuỷ tự nhiên",
+                            Price = 1000000m
+                        },
+                        new
+                        {
+                            DrugId = 2,
+                            Description = "Trang trí trong nhà Chất liệu : • Đá muối",
+                            Name = "Đèn đá muối hình tròn",
+                            Price = 1500000m
+                        },
+                        new
+                        {
+                            DrugId = 3,
+                            Description = "Tranh sơn mài loại nhỏ 15x 15 giá 50.000",
+                            Name = "Tranh sơn mài",
+                            Price = 50000m
+                        },
+                        new
+                        {
+                            DrugId = 4,
+                            Description = "Nguyên liệu thể hiện :    Sơn dầu",
+                            Name = "Tranh sơn dầu - Ngựa",
+                            Price = 450000m
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

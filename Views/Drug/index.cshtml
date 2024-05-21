@@ -1,0 +1,23 @@
+@model List<FptLongChauApp.Models.Drug>
+@{
+    ViewData["Title"] = "Drugs";
+}
+
+<div class="card-columns">
+    @foreach (var drug in Model)
+    {
+        <div class=card>
+            <h3 class="card-header">@drug.Name</h3>
+            <div class="card-body" style="height: 150px;">
+                @drug.Description
+            </div>
+            <div class="card-footer">
+                <span class="text-muted">@(drug.Price.ToString("n0")) VND</span>    
+                <a asp-route="addcart" 
+                   asp-route-drugid="@drug.DrugId"
+                   class="btn btn-secondary btn-sm float-right">Order</a>
+            </div>
+        </div>
+    }
+
+</div>

@@ -1,15 +1,21 @@
 ﻿using FptLongChauApp.Models;
+using FptLongChauApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FptLongChauApp
@@ -28,56 +34,51 @@ namespace FptLongChauApp
             services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            // Đăng ký các dịch vụ của Identity
+            // Sign up for Identity services
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddDefaultUI();
+            services.AddSession();
 
-            // Truy cập IdentityOptions
+
+            // Access IdentityOptions
             services.Configure<IdentityOptions>(options => {
-                // Thiết lập về Password
-                options.Password.RequireDigit = false; // Không bắt phải có số
-                options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
-                options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
-                options.Password.RequireUppercase = false; // Không bắt buộc chữ in
-                options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
-                options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
+                // Set up Password
+                options.Password.RequireDigit = false; // Number is not required
+                options.Password.RequireLowercase = false; // Does not require lowercase letters
+                options.Password.RequireNonAlphanumeric = false; // Does not capture special characters
+                options.Password.RequireUppercase = false; // Printing is not required
+                options.Password.RequiredLength = 3; // Minimum number of characters for password
+                options.Password.RequiredUniqueChars = 1; // Number of distinct characters
 
-                // Cấu hình về User.
-                options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                //options.User.RequireUniqueEmail = true; // Email là duy nhất
-
-                // Cấu hình đăng nhập.
-                //options.SignIn.RequireConfirmedEmail = true; // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-                //options.SignIn.RequireConfirmedPhoneNumber = false; // Xác thực số điện thoại
-
+                // User configuration.
+                options.User.AllowedUserNameCharacters = // characters named user
+                                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             });
 
-            // Cấu hình Cookie
+            // Cookie Configuration
             services.ConfigureApplicationCookie(options => {
-                // options.Cookie.HttpOnly = true;  
-                //options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                options.LoginPath = $"/login/"; // Url đến trang đăng nhập
+                options.LoginPath = $"/login/"; 
                 options.LogoutPath = $"/logout/";
-                options.AccessDeniedPath = $"/Identity/Account/AccessDenied"; // Trang khi User bị cấm truy cập
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
+            services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 
             services.Configure<RouteOptions>(options => {
-                options.AppendTrailingSlash = false; // Thêm dấu / vào cuối URL
-                options.LowercaseUrls = true; // url chữ thường
-                options.LowercaseQueryStrings = false; // không bắt query trong url phải in thường
+                options.AppendTrailingSlash = false; // Add a / to the end of the URL
+                options.LowercaseUrls = true; // lowercase url
+                options.LowercaseQueryStrings = false; // do not force the query in the url to be in lower case
             });
 
-            services.AddAuthorization(options =>
+            /*services.AddAuthorization(options =>
             {
                 // User thỏa mãn policy khi có roleclaim: permission với giá trị manage.user
                 options.AddPolicy("AdminDropdown", policy => {
                     policy.RequireClaim("permission", "manage.user");
                 });
-            });
+            });*/
 
-            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,7 +91,7 @@ namespace FptLongChauApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days. You may want to change this for Drugion scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -99,12 +100,16 @@ namespace FptLongChauApp
             app.UseRouting();
             app.UseAuthentication();   // Phục hồi thông tin đăng nhập (xác thực)
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.Run(async (context) => {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await context.Response.WriteAsync("Page not found!");
             });
         }
     }

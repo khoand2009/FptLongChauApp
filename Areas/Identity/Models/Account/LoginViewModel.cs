@@ -11,17 +11,17 @@ namespace FptLongChauApp.Areas.Identity.Models.Account
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "Phải nhập {0}")]
-        [Display(Name = "Địa chỉ email hoặc tên tài khoản")]
+        [Required(ErrorMessage = "Must enter {0}")]
+        [Display(Name = "UserName Or Email")]
         public string UserNameOrEmail { get; set; }
 
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Mật khẩu")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Nhớ thông tin đăng nhập?")]
+        [Display(Name = "Remember your login information?")]
         public bool RememberMe { get; set; }
     }
 }
